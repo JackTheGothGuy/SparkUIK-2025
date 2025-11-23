@@ -8,14 +8,17 @@ The goal:
 the challenge is all about reading user input, no prior binary exploitation needed
 
 variables used
+
 <img width="206" height="69" alt="image" src="https://github.com/user-attachments/assets/289090d2-948e-44ab-88cf-78070ab57e73" />
 
 
 the program reads user input
+
 <img width="589" height="41" alt="image" src="https://github.com/user-attachments/assets/3c213424-6136-4805-bc9f-6ddb14dc85ef" />
 
 
 stores the big buf into buffer
+
 <img width="436" height="40" alt="image" src="https://github.com/user-attachments/assets/2dffee2a-cb97-49cd-b37f-ebb3879f4513" />
 
 
