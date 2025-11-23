@@ -1,9 +1,13 @@
-SIRIUS – PART I CTF Writeup
-Challenge Overview
+# SIRIUS – PART I CTF Writeup
+
+
+## Challenge Overview
+
+
 The binary presents itself as a poetic Star Themed program. It prints verses, accepts user input, echoes part of it back, and—only under certain circumstances—reveals the secret fragment (the flag)
 
 The goal:
-➡ Trigger the hidden code path in order to call print_flag() and leak the flag.
+ Trigger the hidden code path in order to call print_flag() and leak the flag.
 
 the challenge is all about reading user input, no prior binary exploitation needed
 
