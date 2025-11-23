@@ -156,10 +156,7 @@ At the exact offset for the data field of the control chunk_t, they store p64(VI
 
 
 
-
-
-<img width="773" height="794" alt="image" src="https://github.com/user-attachments/assets/7a1b1d60-e459-492e-a40d-f01689e0f9ea" />
-
+<img width="719" height="740" alt="image" src="https://github.com/user-attachments/assets/3a2d28e8-21fa-46ed-b85f-f2c1e8d0ecad" />
 
 
 
