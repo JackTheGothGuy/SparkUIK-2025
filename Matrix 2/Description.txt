@@ -1,6 +1,0 @@
-name: "Matrix 2"
-author: "JackTheGothGuy"
-category: Reverse Engineering
-description: |-
-   "Jack Ran out of ideas, so he made it 5x5 times harder, and it's randomized now"  
-  
