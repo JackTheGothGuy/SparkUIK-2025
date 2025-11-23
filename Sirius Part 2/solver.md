@@ -1,6 +1,9 @@
 # SIRIUS – PART IT CTF Writeup
 
 
+<img width="150" height="20" alt="image" src="https://github.com/user-attachments/assets/4a8c0e62-bda6-49d1-875d-502672d5b050" />
+
+
 ## Challenge Overview
 
 
@@ -19,14 +22,6 @@ No explicit stack protections assumed in challenge — the challenge likely expe
 
 
 
-<img width="174" height="131" alt="image" src="https://github.com/user-attachments/assets/fb5de257-b040-498a-824c-eaf3d2b3c07d" />
-
-
-
-
-
-
-<img width="111" height="107" alt="image" src="https://github.com/user-attachments/assets/ce7c7153-9319-4135-acb0-41d46113b5bb" />
 
 
 
