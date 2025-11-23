@@ -1,0 +1,13 @@
+name: "Sirius Part III"
+author: "JackTheGothGuy"
+category: Binary Exploitation
+description: |-
+   "The Sirius, The Brightest Star, The Hardest To Follow, The Warmest To Cling, The Third Fragment Is Well Hidden In A Treasure Inside A Mountain."  
+  
+
+you need to heap the challenge to get the link to an image, view its metadata, decode it and then send it to 
+
+
+
+Hint 1: Heap
+Hint 2: Steghide
