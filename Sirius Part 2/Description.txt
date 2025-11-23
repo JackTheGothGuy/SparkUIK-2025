@@ -1,0 +1,6 @@
+name: "Sirius Part II"
+author: "JackTheGothGuy"
+category: Binary Exploitation
+description: |-
+   "The Sirius, The Brightest Star, The Easiest To Follow, The Warmest To Cling, The Second Fragment Is Hidden In The Depths Of the Dark Forest."  
+  
