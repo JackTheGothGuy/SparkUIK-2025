@@ -31,6 +31,14 @@ Lack of mitigations / fixed addresses used — the provided solver uses hardcode
 
 
 
+| Vulnerability                    | Why it's exploitable                               |
+| -------------------------------- | -------------------------------------------------- |
+| **Heap overflow in `do_edit()`** | Write up to 0x2000 bytes into an undersized buffer |
+| **Use-After-Free of `data`**     | Data pointer remains in use after free             |
+| **No pointer nulling**           | Allows reusing freed memory unpredictably          |
+| **Function pointer overwrite**   | `victim` is globally available and called          |
+| **`puts(data)` info leak**       | Allows leaking contents of arbitrary memory        |
+| **No double-free protection**    | Allows tcache poisoning                            |
 
 
 
@@ -45,6 +53,18 @@ Use the program’s edit functionality on that adjacent entry to write the print
 
 Call the “Invoke ritual” menu option — the program will call victim() (now print_flag), printing the flag.
 
+
+
+
+
+and for the variable addresses we can use this trick
+
+<img width="485" height="59" alt="image" src="https://github.com/user-attachments/assets/d6ca058f-2c65-44f5-9ddb-90ad84e6c7ae" />
+
+
+
+
+and then we build our python script
 
 
 Python Script For The Exploit
@@ -138,35 +158,17 @@ At the exact offset for the data field of the control chunk_t, they store p64(VI
 
 
 
-| Vulnerability                    | Why it's exploitable                               |
-| -------------------------------- | -------------------------------------------------- |
-| **Heap overflow in `do_edit()`** | Write up to 0x2000 bytes into an undersized buffer |
-| **Use-After-Free of `data`**     | Data pointer remains in use after free             |
-| **No pointer nulling**           | Allows reusing freed memory unpredictably          |
-| **Function pointer overwrite**   | `victim` is globally available and called          |
-| **`puts(data)` info leak**       | Allows leaking contents of arbitrary memory        |
-| **No double-free protection**    | Allows tcache poisoning                            |
+<img width="773" height="794" alt="image" src="https://github.com/user-attachments/assets/7a1b1d60-e459-492e-a40d-f01689e0f9ea" />
 
 
 
 
 
-<img width="485" height="59" alt="image" src="https://github.com/user-attachments/assets/d6ca058f-2c65-44f5-9ddb-90ad84e6c7ae" />
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+open the drive link
+```
+[The Final Fragment Descends]
+https://drive.google.com/file/d/17WvFA-O5XpopuW9DCyXS7DTyg1wh27px/view?usp=sharing
+```
 
 
 
@@ -178,12 +180,35 @@ and you'll get the "flag" which is an image
 Now The Fun Part
 
 
+open the image's metadata in a metadata viewer
 
 
+you'll see a suspicious comment that's not supposed to be there
 
 
+<img width="1029" height="631" alt="image" src="https://github.com/user-attachments/assets/98cff776-9851-4e06-b36a-c9aa29838e52" />
 
 
+if you haven't realised that it's base64 yet, paste it into a hash identifier
 
 
+<img width="970" height="158" alt="image" src="https://github.com/user-attachments/assets/092d4bea-9554-4ecd-b6b7-600b0517f2f6" />
+
+
+now decode it
+
+
+<img width="1146" height="752" alt="image" src="https://github.com/user-attachments/assets/bc8d1187-c93f-4f9a-bb00-81d47a3e6bf2" />
+
+
+you'll see a steghide comment, you can use steghide or any steganographic decoder to decode it
+
+
+<img width="1203" height="400" alt="image" src="https://github.com/user-attachments/assets/648f40e7-2f98-4440-8d94-28e648ae1565" />
+
+
+decode it and congrats you found the sirius
+
+
+<img width="388" height="158" alt="image" src="https://github.com/user-attachments/assets/921115b0-4ede-47cc-aec4-b0974d0aba7a" />
 
