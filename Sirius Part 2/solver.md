@@ -1,4 +1,4 @@
-<img width="520" height="415" alt="image" src="https://github.com/user-attachments/assets/7fe5839f-78ea-40c5-bdda-841bfd7cd71b" /># SIRIUS – PART IT CTF Writeup
+# SIRIUS – PART IT CTF Writeup
 
 
 ![f56de5_911f969f057d4a149f8c30d27daa74cb~mv2](https://github.com/user-attachments/assets/ed0b076b-af90-4e28-835d-bde8669d36bd)
