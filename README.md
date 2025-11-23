@@ -1,6 +1,8 @@
 # SparkUIK-2025
 
-![f56de5_080c98a6a66b4af3b43384152c0378a7~mv2](https://github.com/user-attachments/assets/7150b40d-393f-4562-8561-8cb6c192171c)
+
+![FLTO75BIKSDZOIE4IHFK6CKFLEYHGTRE](https://github.com/user-attachments/assets/c17ec871-d9e9-4b33-a348-0a2b8978c40c)
+![H64L2BQFREUK5IUDRHH7T7RR5DCNWUF2](https://github.com/user-attachments/assets/721e3e58-f5d1-4036-8d62-e07b6a3e5188)
 
 All Writeups For JackTheGothGuy's SparkUIK Tasks
 
@@ -15,3 +17,9 @@ All Writeups For JackTheGothGuy's SparkUIK Tasks
 ![3YERG63IZAYER24MNE2C74DQ7SMRPCTT](https://github.com/user-attachments/assets/614251e7-208e-4836-9f0f-b68a61963f0a)
 
 
+![44MGGAPLPD6UXHU4RXFFXS7ZHTDF7WGY](https://github.com/user-attachments/assets/eb9dcfee-376d-4a4f-8a4c-3318c550a841)
+
+![B2JINAFADFEN2ZUEQJUFQVW4RUX7MFR7](https://github.com/user-attachments/assets/712f5ce0-71db-4a98-a7ae-32545381b282)
+
+
+![f56de5_18a8db83a2644ca79f5abb207952ede8~mv2](https://github.com/user-attachments/assets/aa8e834e-d2e7-4811-8b7c-563207377166)
