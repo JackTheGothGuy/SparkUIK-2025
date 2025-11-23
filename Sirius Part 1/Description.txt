@@ -1,0 +1,6 @@
+name: "Sirius Part I"
+author: "JackTheGothGuy"
+category: Binary Exploitation
+description: |-
+   "The Sirius, The Brightest Star, The Eternal Poem Has Been Shattered Into 3 Fragments, Find Them All And Win The Eternal Trust of the Sirius"  
+  
