@@ -13,6 +13,11 @@ the goal is to overwrite a global function pointer (victim) on the BSS by corrup
 
 
 
+<img width="618" height="379" alt="image" src="https://github.com/user-attachments/assets/420ab32c-f3cd-4e88-9a4a-7da4b9e4b416" />
+
+
+
+
 ## Vulnerability
 
 
@@ -23,7 +28,6 @@ Persistent metadata in linear array — table[] stores pointers to metadata (chu
 Writable function pointer in data section — the binary has a global function pointer void (*victim)(void) = NULL; that the exploit targets. If the attacker can write an address into that location, the program will call it from invoke_ritual() (with minimal checks), enabling code flow to print_flag().
 
 Lack of mitigations / fixed addresses used — the provided solver uses hardcoded addresses (PRINT_FLAG and the address of the victim pointer). In a real remote, either ASLR is disabled or these addresses can be discovered (e.g., via symbol info in the distributed binary or a prior leak).
-
 
 
 
@@ -126,9 +130,42 @@ At the exact offset for the data field of the control chunk_t, they store p64(VI
 
 (Implementation note: depending on the exact heap packing produced by the libc allocator / binary, the script indexes used for the second edit can differ; the solver demonstrates a working sequence for the deployed binary.)
 
-invoke() — call “Invoke ritual”. invoke_ritual() checks if (victim == print_flag) first; but because victim now points to print_flag, it triggers the sirius_poem() + print_flag() flow. The print_flag() reads and prints flag.txt.
+5- invoke() — call “Invoke ritual”. invoke_ritual() checks if (victim == print_flag) first; but because victim now points to print_flag, it triggers the sirius_poem() + print_flag() flow. The print_flag() reads and prints flag.txt.
 
-p.interactive() — keep the session open to see the flag or interact further.
+6- p.interactive() — keep the session open to see the flag or interact further.
+
+
+
+
+
+| Vulnerability                    | Why it's exploitable                               |
+| -------------------------------- | -------------------------------------------------- |
+| **Heap overflow in `do_edit()`** | Write up to 0x2000 bytes into an undersized buffer |
+| **Use-After-Free of `data`**     | Data pointer remains in use after free             |
+| **No pointer nulling**           | Allows reusing freed memory unpredictably          |
+| **Function pointer overwrite**   | `victim` is globally available and called          |
+| **`puts(data)` info leak**       | Allows leaking contents of arbitrary memory        |
+| **No double-free protection**    | Allows tcache poisoning                            |
+
+
+
+
+
+<img width="485" height="59" alt="image" src="https://github.com/user-attachments/assets/d6ca058f-2c65-44f5-9ddb-90ad84e6c7ae" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
