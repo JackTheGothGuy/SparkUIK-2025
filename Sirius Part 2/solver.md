@@ -17,6 +17,18 @@ Stack-local `auth` variable adjacent to `buf` — `auth` (an `int`) is stored on
 No explicit stack protections assumed in challenge — the challenge likely expects exploitation through overwriting `auth`. Depending on compilation flags and platform, other hardening may be present (stack canaries, ASLR, PIE, NX). The simplest route is a straight overwrite of `auth`, not return-address control.
 
 
+
+
+<img width="111" height="107" alt="image" src="https://github.com/user-attachments/assets/edbded21-c917-4e83-b224-48c52dfe361f" />
+
+<img width="111" height="107" alt="image" src="https://github.com/user-attachments/assets/ce7c7153-9319-4135-acb0-41d46113b5bb" />
+
+
+
+
+
+
+
 buf is 64 bytes. Writing 64 bytes fills buf. The next 4 bytes on the stack are auth (an int), so write additional 4 bytes with the little-endian representation of 0x1337 (b'\x37\x13\x00\x00') to overwrite auth.
 
 Send the total payload: 64 bytes filler + 4 bytes p32(0x1337). The program will then check auth and, if equal, run sirius_poem() and print_flag().
