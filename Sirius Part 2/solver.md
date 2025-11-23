@@ -24,6 +24,7 @@ No explicit stack protections assumed in challenge — the challenge likely expe
 
 
 
+<img width="166" height="169" alt="image" src="https://github.com/user-attachments/assets/ebd35b20-5fd8-4ab3-a860-140b40598e2a" />
 
 
 
@@ -34,3 +35,17 @@ buf is 64 bytes. Writing 64 bytes fills buf. The next 4 bytes on the stack are a
 Send the total payload: 64 bytes filler + 4 bytes p32(0x1337). The program will then check auth and, if equal, run sirius_poem() and print_flag().
 
 Important note about printf("%s", buf): the program prints buf after the gets(). If your 4 bytes for auth include \x00 (they do), the printed string will be truncated at the first \x00. That does not affect the overwrite; gets() wrote the bytes into memory, and auth will be overwritten. The only consequence is less visible echo output.
+
+
+
+
+Netcat Version
+```python3 -c "import sys; sys.stdout.buffer.write(b'A'*76 + b'\x37\x13\x00\x00')" | nc 72.146.224.45 6050```
+
+Local Version
+```python3 -c "import sys; sys.stdout.buffer.write(b'A'*76 + b'\x37\x13\x00\x00')" | ./sirius2```
+
+
+
+
+
