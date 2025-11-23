@@ -1,7 +1,7 @@
 # SIRIUS – PART IT CTF Writeup
 
 
-<img width="150" height="20" alt="image" src="https://github.com/user-attachments/assets/4a8c0e62-bda6-49d1-875d-502672d5b050" />
+<img width="1500" height="80" alt="image" src="https://github.com/user-attachments/assets/4a8c0e62-bda6-49d1-875d-502672d5b050" />
 
 
 ## Challenge Overview
