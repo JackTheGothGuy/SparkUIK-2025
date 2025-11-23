@@ -12,5 +12,6 @@ All Writeups For JackTheGothGuy's SparkUIK Tasks
 
 
 
+![3YERG63IZAYER24MNE2C74DQ7SMRPCTT](https://github.com/user-attachments/assets/614251e7-208e-4836-9f0f-b68a61963f0a)
 
-![Uploading 3YERG63IZAYER24MNE2C74DQ7SMRPCTT.gif…]()
+
